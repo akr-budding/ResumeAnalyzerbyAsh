@@ -1,0 +1,161 @@
+<div class="page-wrapper">
+
+  <!-- ── Hero Header ── -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">✦ Powered by Groq AI</div>
+      <h1 class="hero-title">AI Resume Analyzer</h1>
+      <p class="hero-subtitle">Upload your resume and get instant, AI-powered career insights in seconds.</p>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ── Upload Card ── -->
+    <div class="card upload-card" [class.has-file]="fileName">
+
+      <!-- Drop zone -->
+      <label class="drop-zone" for="fileInput">
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 16V4m0 0L8 8m4-4 4 4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="drop-title">{{ fileName || 'Drop your resume here' }}</p>
+        <p class="drop-sub">{{ fileName ? 'File ready to analyze' : 'Supports PDF and TXT · Max 5MB' }}</p>
+        <span class="drop-btn">{{ fileName ? '✓ Change File' : 'Browse File' }}</span>
+      </label>
+      <input id="fileInput" type="file" accept=".pdf,.txt" class="file-input" (change)="onFileSelected($event)" />
+
+      <!-- Divider -->
+      <div class="divider"><span>or paste resume text</span></div>
+
+      <!-- Textarea -->
+      <textarea
+        [(ngModel)]="resumeText"
+        placeholder="Paste your resume content here..."
+        rows="8"
+        class="resume-textarea"
+      ></textarea>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" (click)="analyzeResume()" [disabled]="isLoading">
+          <span *ngIf="!isLoading" class="btn-inner">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="18"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 0 0 .951-.69l1.07-3.292z"/></svg>
+            Analyze Resume
+          </span>
+          <span *ngIf="isLoading" class="btn-inner">
+            <span class="btn-spinner"></span> Analyzing...
+          </span>
+        </button>
+        <button class="btn btn-ghost" (click)="clearAll()" [disabled]="isLoading">Clear</button>
+      </div>
+
+      <!-- Error -->
+      <div *ngIf="errorMessage" class="error-banner">
+        <svg viewBox="0 0 20 20" fill="currentColor" width="18"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0zm-7 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm-1-9a1 1 0 0 0-1 1v4a1 1 0 1 0 2 0V6a1 1 0 0 0-1-1z" clip-rule="evenodd"/></svg>
+        {{ errorMessage }}
+      </div>
+    </div>
+
+    <!-- ── Loading Skeleton ── -->
+    <div *ngIf="isLoading" class="skeleton-grid">
+      <div class="skeleton-card" *ngFor="let i of [1,2,3,4]">
+        <div class="skeleton-line wide"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line medium"></div>
+        <div class="skeleton-line"></div>
+      </div>
+    </div>
+
+    <!-- ── Results ── -->
+    <div *ngIf="analysis && !isLoading" class="results-grid">
+
+      <!-- Summary -->
+      <div class="result-card summary-card animate-in">
+        <div class="card-header">
+          <div class="card-icon summary-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22">
+              <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>Summary</h2>
+        </div>
+        <p class="summary-text">{{ analysis.summary }}</p>
+      </div>
+
+      <!-- Strengths -->
+      <div class="result-card strengths-card animate-in" style="animation-delay:.1s">
+        <div class="card-header">
+          <div class="card-icon strengths-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22">
+              <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 0 0 1.946-.806 3.42 3.42 0 0 1 4.438 0 3.42 3.42 0 0 0 1.946.806 3.42 3.42 0 0 1 3.138 3.138 3.42 3.42 0 0 0 .806 1.946 3.42 3.42 0 0 1 0 4.438 3.42 3.42 0 0 0-.806 1.946 3.42 3.42 0 0 1-3.138 3.138 3.42 3.42 0 0 0-1.946.806 3.42 3.42 0 0 1-4.438 0 3.42 3.42 0 0 0-1.946-.806 3.42 3.42 0 0 1-3.138-3.138 3.42 3.42 0 0 0-.806-1.946 3.42 3.42 0 0 1 0-4.438 3.42 3.42 0 0 0 .806-1.946 3.42 3.42 0 0 1 3.138-3.138z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>Strengths</h2>
+          <span class="badge badge-green">{{ analysis.strengths.length }}</span>
+        </div>
+        <ul class="result-list">
+          <li *ngFor="let item of analysis.strengths" class="list-item strengths-item">
+            <span class="dot dot-green"></span>{{ item }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Weaknesses -->
+      <div class="result-card weaknesses-card animate-in" style="animation-delay:.2s">
+        <div class="card-header">
+          <div class="card-icon weaknesses-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22">
+              <path d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>Weaknesses</h2>
+          <span class="badge badge-amber">{{ analysis.weaknesses.length }}</span>
+        </div>
+        <ul class="result-list">
+          <li *ngFor="let item of analysis.weaknesses" class="list-item weaknesses-item">
+            <span class="dot dot-amber"></span>{{ item }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Improvements -->
+      <div class="result-card improvements-card animate-in" style="animation-delay:.3s">
+        <div class="card-header">
+          <div class="card-icon improvements-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>Suggested Improvements</h2>
+          <span class="badge badge-blue">{{ analysis.suggestedImprovements.length }}</span>
+        </div>
+        <ul class="result-list">
+          <li *ngFor="let item of analysis.suggestedImprovements; let i = index" class="list-item improvements-item">
+            <span class="step-num">{{ i + 1 }}</span>{{ item }}
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-glow"></div>
+      <p class="footer-credit">
+        Crafted with <span class="heart">♥</span> by
+        <span class="author">Ashwini Ranjan</span>
+        &nbsp;·&nbsp; Powered by
+        <span class="highlight">Agentic AI</span>
+      </p>
+      <p class="footer-sub">Angular · .NET Core · Groq LLM · Claude Code</p>
+    </div>
+  </footer>
+
+</div>

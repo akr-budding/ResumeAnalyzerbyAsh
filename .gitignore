@@ -1,0 +1,26 @@
+# ── .NET ──
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/appsettings.*.json
+!backend/**/appsettings.json
+
+# !! Strip real secrets before committing appsettings.json
+# Use Azure App Service environment variables for secrets in production
+
+# ── Angular ──
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# ── Visual Studio ──
+.vs/
+*.vsidx
+*.suo
+*.user
+
+# ── General ──
+.env
+*.log
+.DS_Store
+Thumbs.db
