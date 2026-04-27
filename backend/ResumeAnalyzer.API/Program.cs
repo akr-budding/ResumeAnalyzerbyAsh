@@ -21,7 +21,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
         policy.WithOrigins(
                   "http://localhost:4200",
-                  "https://project-er5ky.vercel.app"
+                  "https://ashwiniresumeanalyzer.vercel.app"
               )
               .AllowAnyHeader()
               .AllowAnyMethod());
