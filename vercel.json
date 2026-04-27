@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd frontend && npm ci && npx ng build --configuration production",
+  "outputDirectory": "frontend/dist/ai-resume-analyzer/browser",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
