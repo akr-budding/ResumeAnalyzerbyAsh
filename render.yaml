@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: resume-analyzer-api
+    runtime: docker
+    dockerfilePath: backend/ResumeAnalyzer.API/Dockerfile
+    dockerContext: backend/ResumeAnalyzer.API
+    plan: free
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: OpenAI__UseMock
+        value: "false"
+      - key: OpenAI__Model
+        value: llama-3.3-70b-versatile
+      - key: OpenAI__Endpoint
+        value: https://api.groq.com/openai/v1/chat/completions
+      - key: OpenAI__ApiKey
+        sync: false   # ← Render will prompt you to enter this secret manually
