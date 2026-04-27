@@ -21,7 +21,9 @@ public class AIService : IAIService
 
     public async Task<ResumeAnalysis> AnalyzeResumeAsync(string resumeText)
     {
+        // Try nested config first (local), then plain env var (Render/cloud)
         var apiKey = _config["OpenAI:ApiKey"]
+            ?? Environment.GetEnvironmentVariable("GROQ_API_KEY")
             ?? throw new InvalidOperationException("API key is not configured.");
 
         var model    = _config["OpenAI:Model"]    ?? "gemini-2.0-flash";
